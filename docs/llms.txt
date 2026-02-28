@@ -122,6 +122,18 @@ mkrfc resolve                      # resolve a draft RFC
 mkrfc templates                    # show available templates
 ```
 
+## Non-interactive (non-TTY) mode
+
+When stdin is not a TTY (piped input, CI), interactive TUI forms are skipped. Pass flags instead:
+
+```
+mkrfc new --title "My RFC" [--summary TEXT] [--template NAME] [--sections motivation,implementation]
+mkrfc resolve --rfc 1 --status ACCEPTED [--note TEXT]
+mkrfc review --rfc 1 --action accept [--reviewer NAME] [--note TEXT]
+```
+
+`mkrfc list` always works non-interactively.
+
 ## Optional
 
 - [Source code](https://github.com/flaticols/mkrfc)

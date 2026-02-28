@@ -67,6 +67,26 @@ Command: gh pr view --json url -q .url
 3. Action: "Add as reviewer" | "Approve (ACCEPTED)" | "Reject (REJECTED)"
 4. If approve/reject: enter note → appended as ## Resolution section
 </review-flow>
+<non-tty>
+When stdin is not a TTY (piped, CI), interactive forms are skipped and flags are used instead.
+
+mkrfc new --title TEXT [--summary TEXT] [--template NAME] [--sections LIST]
+  --title      RFC title (required)
+  --summary    brief summary (default: "")
+  --template   template name (default: first available)
+  --sections   comma-separated section keys (default: motivation,implementation,drawbacks,alternatives)
+
+mkrfc resolve --rfc N --status STATUS [--note TEXT]
+  --rfc        RFC number (required)
+  --status     ACCEPTED | REJECTED | SUPERSEDED (required)
+  --note       resolution note
+
+mkrfc review --rfc N [--reviewer NAME] [--action ACTION] [--note TEXT]
+  --rfc        RFC number (required)
+  --reviewer   reviewer name (default: git config user)
+  --action     review | accept | reject (default: review)
+  --note       resolution note (for accept/reject)
+</non-tty>
 <examples>
 mkrfc                              # new RFC if none exist
 mkrfc new                          # create RFC interactively

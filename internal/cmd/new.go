@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"flag"
 	"fmt"
 	"io/fs"
 	"os"
@@ -85,6 +86,46 @@ func buildNewForm(templates []tpl.Template) (newFormResult, error) {
 	return result, nil
 }
 
+func parseNewFlags(templates []tpl.Template) (newFormResult, error) {
+	fs := flag.NewFlagSet("new", flag.ContinueOnError)
+	title := fs.String("title", "", "RFC title (required)")
+	summary := fs.String("summary", "", "brief summary")
+	tmplName := fs.String("template", templates[0].Name, "template name")
+	sectionsRaw := fs.String("sections", "motivation,implementation,drawbacks,alternatives", "comma-separated sections to include")
+
+	args := []string{}
+	if len(os.Args) > 2 {
+		args = os.Args[2:]
+	}
+	if err := fs.Parse(args); err != nil {
+		return newFormResult{}, err
+	}
+	if strings.TrimSpace(*title) == "" {
+		return newFormResult{}, fmt.Errorf("--title is required in non-interactive mode")
+	}
+
+	var sections []string
+	for _, s := range strings.Split(*sectionsRaw, ",") {
+		if s = strings.TrimSpace(s); s != "" {
+			sections = append(sections, s)
+		}
+	}
+
+	return newFormResult{
+		title:            *title,
+		summary:          *summary,
+		selectedTemplate: *tmplName,
+		sections:         sections,
+	}, nil
+}
+
+func getNewInput(templates []tpl.Template) (newFormResult, error) {
+	if isTTY() {
+		return buildNewForm(templates)
+	}
+	return parseNewFlags(templates)
+}
+
 func templateContent(templates []tpl.Template, name string) string {
 	for _, t := range templates {
 		if t.Name == name {
@@ -101,9 +142,9 @@ func runNew(embeddedFS fs.FS) int {
 		return 1
 	}
 
-	result, err := buildNewForm(templates)
+	result, err := getNewInput(templates)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "form error: %v\n", err)
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		return 1
 	}
 
