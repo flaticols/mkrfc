@@ -1,11 +1,11 @@
 package cmd
 
-import "os"
+import (
+	"os"
+
+	"golang.org/x/term"
+)
 
 func isTTY() bool {
-	fi, err := os.Stdin.Stat()
-	if err != nil {
-		return false
-	}
-	return fi.Mode()&os.ModeCharDevice != 0
+	return term.IsTerminal(int(os.Stdout.Fd()))
 }
