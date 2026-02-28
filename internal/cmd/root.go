@@ -59,14 +59,21 @@ func printUsage() {
 	fmt.Print(`mkrfc — RFC management tool
 
 Usage:
-  mkrfc new         Create a new RFC
-  mkrfc list        List all RFCs
-  mkrfc resolve     Resolve (accept/reject) a draft RFC
-  mkrfc review      Review a draft RFC (add reviewer, approve, or reject)
-  mkrfc templates   List available templates
-  mkrfc version     Print version
-  mkrfc llm         Print compact LLM-friendly help in XML format
-  mkrfc help        Show this help
+  mkrfc              List RFCs if any exist, otherwise create a new one
+  mkrfc new          Create a new RFC (interactive, or use flags in non-TTY)
+  mkrfc list         List all RFCs
+  mkrfc resolve      Resolve a draft RFC (accept / reject / supersede)
+  mkrfc review       Add reviewer; optionally approve or reject
+  mkrfc approve      Alias for review
+  mkrfc templates    List available templates
+  mkrfc version      Print version
+  mkrfc llm          Print compact LLM-friendly help in XML format
+  mkrfc help         Show this help
+
+Non-interactive flags (when stdout is not a TTY):
+  mkrfc new     --title TEXT [--summary TEXT] [--template NAME] [--sections LIST]
+  mkrfc resolve --rfc N --status STATUS [--note TEXT]
+  mkrfc review  --rfc N [--action review|accept|reject] [--reviewer NAME] [--note TEXT]
 
 RFCs are stored in docs/rfc/
 Custom templates go in docs/rfc/.templates/

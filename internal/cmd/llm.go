@@ -6,7 +6,7 @@ func printLLMHelp() {
 	fmt.Print(`<mkrfc>
 <desc>CLI tool for creating and managing project RFCs. Stores RFCs as Markdown files with YAML frontmatter in docs/rfc/. Interactive TUI forms powered by charmbracelet/huh.</desc>
 <commands>
-mkrfc                  if no RFCs exist, run new; otherwise run list
+mkrfc                  list RFCs if any exist; otherwise run new
 mkrfc new              create RFC interactively (template, title, summary, sections)
 mkrfc list             list all RFCs: NUM, TITLE, STATUS, DATE, AUTHORS
 mkrfc list --status S  filter by status (DRAFT, ACCEPTED, REJECTED, SUPERSEDED)

@@ -9,16 +9,30 @@ go install github.com/flaticols/mkrfc@latest
 ## Usage
 
 ```
-mkrfc              New RFC if none exist, otherwise list all RFCs
-mkrfc new          Create a new RFC with interactive form
+mkrfc              List RFCs if any exist, otherwise create a new one
+mkrfc new          Create a new RFC (interactive, or flags in non-TTY)
 mkrfc list         List all RFCs
 mkrfc resolve      Transition a draft RFC (accept / reject / supersede)
 mkrfc review       Add a reviewer; optionally approve or reject
+mkrfc approve      Alias for review
 mkrfc templates    List available templates
 mkrfc version      Print version
 mkrfc llm          Print compact LLM-friendly help in XML format
 mkrfc help         Show help
 ```
+
+### Non-interactive mode
+
+When stdout is not a TTY (piped output, CI), the interactive forms are skipped.
+Pass flags instead:
+
+```
+mkrfc new     --title "My RFC" [--summary TEXT] [--template NAME] [--sections motivation,implementation]
+mkrfc resolve --rfc 1 --status ACCEPTED [--note TEXT]
+mkrfc review  --rfc 1 --action accept [--reviewer "Name <email>"] [--note TEXT]
+```
+
+`mkrfc list` and `mkrfc templates` always work without a TTY.
 
 ## How it works
 
