@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+
+    <title>mkrfc — RFC Management CLI</title>
+
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1/dist/fonts/geist-sans/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1/dist/fonts/geist-mono/style.css">
+
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">mkrfc</a>
+                <nav>
+                    <a href="#install">Install</a>
+                    <a href="#usage">Usage</a>
+                    <a href="#features">Features</a>
+                    <a href="#examples">Examples</a>
+                    <a href="https://github.com/flaticols/mkrfc">GitHub</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-name">mkrfc</div>
+                <p class="hero-tagline">RFC management for engineering teams.</p>
+                <p class="hero-desc">Create, list, and resolve RFCs from the terminal. Interactive TUI forms, sequential numbering, custom templates, status tracking. No framework, no config.</p>
+            </div>
+        </section>
+
+        <section class="demo">
+            <div class="container">
+                <pre class="terminal"><code><span class="prompt">$</span> mkrfc new
+<span class="dim">  Template  </span>  default (built-in)
+<span class="dim">  RFC Title </span>  Add async job queue
+<span class="dim">  Summary   </span>  Replace synchronous order processing with a queue-backed worker pool
+
+<span class="ok">✓</span> docs/rfc/0001-add-async-job-queue.md</code></pre>
+            </div>
+        </section>
+
+        <section id="install" class="section">
+            <div class="container">
+                <h2>Install</h2>
+                <div class="install-grid">
+                    <div class="install-method">
+                        <h3>Go</h3>
+                        <pre class="code"><code>go install github.com/flaticols/mkrfc@latest</code></pre>
+                    </div>
+                    <div class="install-method">
+                        <h3>Binary</h3>
+                        <p><a href="https://github.com/flaticols/mkrfc/releases">GitHub Releases</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="usage" class="section">
+            <div class="container">
+                <h2>Usage</h2>
+                <div class="usage-grid">
+                    <div class="usage-row">
+                        <code>mkrfc</code>
+                        <span>New RFC if none exist, else list all RFCs</span>
+                    </div>
+                    <div class="usage-row">
+                        <code>mkrfc new</code>
+                        <span>Create a new RFC with interactive form</span>
+                    </div>
+                    <div class="usage-row">
+                        <code>mkrfc list</code>
+                        <span>List all RFCs in a table</span>
+                    </div>
+                    <div class="usage-row">
+                        <code>mkrfc list --status DRAFT</code>
+                        <span>Filter by status</span>
+                    </div>
+                    <div class="usage-row">
+                        <code>mkrfc resolve</code>
+                        <span>Transition a draft RFC to accepted / rejected / superseded</span>
+                    </div>
+                    <div class="usage-row">
+                        <code>mkrfc review</code>
+                        <span>Add a reviewer; optionally approve or reject</span>
+                    </div>
+                    <div class="usage-row">
+                        <code>mkrfc templates</code>
+                        <span>List available templates</span>
+                    </div>
+                    <div class="usage-row">
+                        <code>mkrfc llm</code>
+                        <span>Print compact LLM-friendly help in XML format</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="section">
+            <div class="container">
+                <h2>Features</h2>
+                <div class="features-grid">
+                    <div class="feature">
+                        <h3>Interactive TUI</h3>
+                        <p>Powered by charmbracelet/huh. Select template, enter title and summary — all from the terminal without leaving your workflow.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>Auto Numbering</h3>
+                        <p>RFCs are sequentially numbered <code>0001-slug.md</code>, <code>0002-slug.md</code>. Numbers never collide even with gaps.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>Status Lifecycle</h3>
+                        <p>Track RFCs through DRAFT → ACCEPTED / REJECTED / SUPERSEDED. Resolution appends a dated note to the file.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>Custom Templates</h3>
+                        <p>Drop <code>.md</code> files into <code>docs/rfc/.templates/</code>. <code>mkrfc new</code> presents a picker when multiple templates exist.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>Embedded Default</h3>
+                        <p>The default template is compiled into the binary via <code>//go:embed</code>. Works offline with zero setup.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>Git-Aware Author</h3>
+                        <p>Auto-detects author name and email from <code>git config</code> and injects them into the RFC frontmatter.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>YAML Frontmatter</h3>
+                        <p>Every RFC has structured YAML metadata: title, authors, reviewers, status, date, resolved_date, tags.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>Optional Sections</h3>
+                        <p><code>mkrfc new</code> presents a multi-select picker for optional sections. Only selected sections appear in the output — no TODO placeholders for skipped ones.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>PR Auto-link</h3>
+                        <p>If <code>gh</code> is installed and the current branch has a PR, the PR URL is automatically injected into the RFC header and frontmatter.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>Review &amp; Approve</h3>
+                        <p><code>mkrfc review</code> adds a reviewer to the frontmatter and optionally approves or rejects the RFC with a dated resolution note.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>LLM Help</h3>
+                        <p><code>mkrfc llm</code> prints a compact XML summary of all commands, frontmatter schema, template data, and behavior — designed for pasting into an AI context.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>No Framework</h3>
+                        <p>Command dispatch is a plain switch on <code>os.Args[1]</code>. Two external dependencies: huh and yaml.v3.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="examples" class="section">
+            <div class="container">
+                <h2>Examples</h2>
+
+                <div class="example">
+                    <h3>List RFCs</h3>
+                    <pre class="terminal"><code><span class="prompt">$</span> mkrfc list
+NUM     TITLE                                    STATUS    DATE        AUTHORS
+------------------------------------------------------------------------------------------
+0001    Add async job queue                      ACCEPTED  2024-03-10  Alice &lt;alice@co&gt;
+0002    Migrate to PostgreSQL                    DRAFT     2024-03-15  Bob &lt;bob@co&gt;
+0003    Deprecate legacy auth service            DRAFT     2024-03-20  Alice &lt;alice@co&gt;</code></pre>
+                </div>
+
+                <div class="example">
+                    <h3>Resolve a Draft</h3>
+                    <pre class="terminal"><code><span class="prompt">$</span> mkrfc resolve
+<span class="dim">  RFC     </span>  0002: Migrate to PostgreSQL
+<span class="dim">  Status  </span>  ACCEPTED
+<span class="dim">  Note    </span>  Approved in architecture review, migration planned for Q2
+
+<span class="ok">✓</span> docs/rfc/0002-migrate-to-postgresql.md resolved as ACCEPTED</code></pre>
+                </div>
+
+                <div class="example">
+                    <h3>Custom Templates</h3>
+                    <pre class="terminal"><code><span class="prompt">$</span> ls docs/rfc/.templates/
+lightweight.md
+
+<span class="prompt">$</span> mkrfc new
+<span class="dim">  Template  </span>  ● default (built-in)
+<span class="dim">            </span>  ○ lightweight
+<span class="dim">  RFC Title </span>  Cache invalidation strategy
+<span class="dim">  Summary   </span>  Proposal for a unified cache eviction policy
+
+<span class="ok">✓</span> docs/rfc/0004-cache-invalidation-strategy.md</code></pre>
+                </div>
+
+                <div class="example">
+                    <h3>Filter by Status</h3>
+                    <pre class="terminal"><code><span class="prompt">$</span> mkrfc list --status DRAFT
+NUM     TITLE                                    STATUS    DATE        AUTHORS
+------------------------------------------------------------------------------------------
+0003    Deprecate legacy auth service            DRAFT     2024-03-20  Alice &lt;alice@co&gt;
+0004    Cache invalidation strategy              DRAFT     2024-03-22  Bob &lt;bob@co&gt;</code></pre>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>mkrfc &copy; 2025 <a href="https://github.com/flaticols">Denis Panfilov</a> &middot; MIT License</p>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const t = document.querySelector(a.getAttribute('href'));
+                if (!t) return;
+                e.preventDefault();
+                scrollTo({ top: t.offsetTop - 56, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

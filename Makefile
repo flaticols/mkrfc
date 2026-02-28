@@ -1,7 +1,7 @@
 BUILD_FLAGS=-gcflags="all=-N -l" -trimpath -mod=readonly -modcacherw
 
 build:
-	go build $(BUILD_FLAGS) ./...
+	go build $(BUILD_FLAGS) -o mkrfc .
 
 lint:
 	golangci-lint run --timeout 5m
@@ -9,14 +9,11 @@ lint:
 test:
 	go test -v -cover ./...
 
-build:
-	go build $(BUILD_FLAGS) ./...
-
 install:
-	go install go.uber.org/nilaway/cmd/nilaway@latest
+	go install .
 
 check:
 	go mod tidy
-	git diff --exit-code
+	git diff --exit-code go.mod go.sum
 	make lint
 	make test

@@ -1,0 +1,128 @@
+# mkrfc
+
+> CLI tool for creating and managing project RFCs (Requests for Comments). Stores RFCs as Markdown files with YAML frontmatter in `docs/rfc/`. Provides interactive TUI forms for creation and resolution.
+
+Install: `go install github.com/flaticols/mkrfc@latest`
+
+## Commands
+
+- `mkrfc` — if no RFCs exist, run `mkrfc new`; otherwise run `mkrfc list`
+- `mkrfc new` — interactive form to create a new RFC (template, title, summary, optional sections)
+- `mkrfc list` — list all RFCs in a table (NUM, TITLE, STATUS, DATE, AUTHORS)
+- `mkrfc list --status <STATUS>` — filter list by status
+- `mkrfc resolve` — interactive form to transition a draft RFC (select RFC, pick new status, add note)
+- `mkrfc review` — add a reviewer to a draft RFC; optionally approve or reject it
+- `mkrfc approve` — alias for `mkrfc review`
+- `mkrfc templates` — list available templates (built-in + custom)
+- `mkrfc llm` — print compact XML reference (commands, frontmatter, template data, behavior, examples)
+- `mkrfc help` — show usage
+
+## RFC Storage
+
+- RFCs are written to `docs/rfc/` as `NNNN-slug.md` (e.g. `0001-add-async-job-queue.md`)
+- Custom templates go in `docs/rfc/.templates/*.md`
+- The default template is embedded in the binary
+
+## Frontmatter Schema
+
+Each RFC file has YAML frontmatter:
+
+```yaml
+---
+title: "RFC Title"
+authors:
+  - "Name <email>"
+reviewers: []
+status: "DRAFT"
+date: "2024-01-15"
+resolved_date: ""   # set by mkrfc resolve
+tags: []
+---
+```
+
+## Status Values
+
+- `DRAFT` — active proposal under discussion
+- `ACCEPTED` — approved
+- `REJECTED` — declined
+- `SUPERSEDED` — replaced by another RFC
+
+## mkrfc new — Optional Sections
+
+During `mkrfc new`, a multi-select picker lets you choose which sections to include. Pre-selected defaults: Motivation, Proposed Implementation, Drawbacks, Alternatives.
+
+Available section keys:
+- `motivation`
+- `implementation`
+- `metrics`
+- `drawbacks`
+- `alternatives`
+- `impact`
+- `unresolved`
+- `conclusion`
+
+Sections not selected are omitted from the output entirely. The template checks `{{ if index .Sections "key" }}`.
+
+## mkrfc new — PR Auto-detection
+
+If `gh` CLI is installed and the current branch has an open pull request, `mkrfc new` automatically adds the PR URL to the RFC frontmatter (`pr:` field) and renders a link in the header table.
+
+## mkrfc review
+
+Flow:
+1. Picks from DRAFT RFCs
+2. Prompts for reviewer name (pre-filled from git config)
+3. Prompts for action: "Add as reviewer" / "Approve (ACCEPTED)" / "Reject (REJECTED)"
+4. If approve or reject: prompts for a note, appends `## Resolution` section
+5. Writes updated RFC back to disk
+
+## Template Data
+
+The default template (Go text/template) receives:
+
+- `{{.Title}}` — RFC title
+- `{{.Author}}` — git config user.name + user.email
+- `{{.Date}}` — creation date (YYYY-MM-DD)
+- `{{.Summary}}` — one-line summary from form
+- `{{.PR}}` — PR URL (auto-detected from gh CLI, empty if none)
+- `{{.Sections}}` — `map[string]bool` of selected optional sections; checked with `{{ if index .Sections "key" }}`
+- Optional content fields (empty by default): `{{.TargetServices}}`, `{{.Motivation}}`, `{{.Implementation}}`, `{{.Metrics}}`, `{{.Drawbacks}}`, `{{.Alternatives}}`, `{{.Impact}}`, `{{.Unresolved}}`, `{{.Conclusion}}`
+
+## resolve behavior
+
+`mkrfc resolve`:
+1. Scans `docs/rfc/` for DRAFT RFCs
+2. Presents a picker (select RFC, select new status, enter note)
+3. Updates the frontmatter `status` and `resolved_date`
+4. Appends a `## Resolution` section with status, date, and note
+
+## Auto-numbering
+
+`NextNumber` scans existing `NNNN-*.md` files, takes the maximum number + 1. Returns 1 if the directory is empty or does not exist.
+
+## Custom Templates
+
+Drop any `.md` file (Go text/template syntax) into `docs/rfc/.templates/`. When multiple templates exist, `mkrfc new` shows a template picker first. Built-in templates are marked `(built-in)`.
+
+## Module
+
+- Module path: `github.com/flaticols/mkrfc`
+- Go 1.24+
+- Dependencies: `github.com/charmbracelet/huh`, `gopkg.in/yaml.v3`
+- Internal packages: `internal/rfc`, `internal/tpl`, `internal/cmd`
+
+## Examples
+
+```
+mkrfc                              # new RFC if none exist, else help
+mkrfc new                          # create RFC interactively
+mkrfc list                         # list all RFCs
+mkrfc list --status DRAFT          # show only drafts
+mkrfc resolve                      # resolve a draft RFC
+mkrfc templates                    # show available templates
+```
+
+## Optional
+
+- [Source code](https://github.com/flaticols/mkrfc)
+- [Releases](https://github.com/flaticols/mkrfc/releases)
